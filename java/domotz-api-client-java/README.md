@@ -18,7 +18,6 @@ This project builds a simple client in Java that shows some examples on how to w
  
 ```bash
 # From the directory where this file is
-curl https://api-eu-west-1-cell-1.domotz.com/public-api/v1/meta/open-api-definition > src/main/resources/api.json
 mvn package
 java -jar target/example-client-1.0-SNAPSHOT-jar-with-dependencies.jar -k [your API key] -c [your cell] agents
 # lists all the agents
