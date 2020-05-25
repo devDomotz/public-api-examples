@@ -1,10 +1,8 @@
 <?php
 require_once('vendor/autoload.php');
 $agentId = $argv[1];
-$from = $argv[2];
-$to = $argv[3];
-$baseUrl = $argv[4];
-$apiKey = $argv[5];
+$baseUrl = $argv[2];
+$apiKey = $argv[3];
 
 $client = new \GuzzleHttp\Client();
 $response = $client->request('GET', "$baseUrl/agent/$agentId/device", [

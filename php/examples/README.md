@@ -9,10 +9,10 @@
 
 ## Running
 
-### Report, as cvs file, all the device status changes in a given period for an agent
+### Report, as cvs file, all the device status changes in the last week
 
 ```
 composer install
-php devices_history.php [agent_id] [from] [to] [base_url] [api Key]
+php devices_history.php [agent_id] [base_url] [api Key]
 ```
 
