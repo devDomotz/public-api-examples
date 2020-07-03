@@ -1,0 +1,37 @@
+<html>
+<head>
+    <title>{{ title }} </title>
+</head>
+
+<h1>{{ title }}</h1>
+<div style="width: 100%">
+    {% for camera in cameras %}
+        {% if (loop.index % thumbs_per_row) == 1 %}
+            {% set style = "clear: left; " %}
+        {% else %}
+            {% set style = " " %}
+        {% endif %}
+        <div style="float: left; {{ style }} width:{{ thumb_width }}px; margin: 10px">
+            <h3><a href="https://portal.domotz.com/webapp/#/agent/{{ agent.id }}/devices/{{ camera.id }}"
+                   target="_blank">{{ camera.name }}</a></h3>
+            <div>
+                <span>{{ camera.room or '' }} - {{ camera.zone or '' }}</span>
+            </div>
+            <div style="text-align: center; width: {{ thumb_width }}">
+                {% set alt = {"AUTHENTICATED": camera.name + ' snapshot',
+                              "DOWN": camera.name + ' is OFFLINE',
+                              "LOCKED": camera.name + ' is LOCKED'}[camera.status]      %}
+                <a href="{{ images[camera.id] }}"><img src="{{ thumbnails[camera.id] }}" alt="{{ alt }}"></a>
+            </div>
+            <div>
+                <span>{{ camera.main_ip }} - {{ camera.make }} {{ camera.model or '' }}</span>
+            </div>
+        </div>
+        {% if (loop.index % thumbs_per_row) == 0 %}
+
+            </div>
+            <div style="width: 100%">
+        {% endif %}
+    {% endfor %}
+    </div>
+</html>

@@ -1,0 +1,2 @@
+include domotz_camera_tool/commands/assets/*
+recursive-include data *
