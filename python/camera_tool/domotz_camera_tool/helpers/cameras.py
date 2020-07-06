@@ -1,6 +1,5 @@
 __author__ = 'Iacopo Papalini <iacopo@domotz.com>'
 
-import asyncio
 import json
 import logging
 from collections import namedtuple
@@ -9,6 +8,7 @@ from io import BytesIO
 from PIL import Image
 
 from domotz_camera_tool.client import ApiClient
+from domotz_camera_tool.helpers.async_pool import gather_max_parallelism
 
 CAMERA_TYPE = 199
 Camera = namedtuple('Camera', 'id,name,main_ip,make,model,status,last_status_change,zone,room')
@@ -31,7 +31,7 @@ class CamerasHelper:
                 continue
             fetchers.append(self.client.fetch_device_details(agent_id, data['id']))
 
-        cameras_raw = await asyncio.gather(*fetchers)
+        cameras_raw = await gather_max_parallelism(fetchers)
 
         cameras = []
         for data in cameras_raw:

@@ -4,7 +4,7 @@ Demo program for accessing ONVIF cameras and creating snapshots
 
 ## Requirements 
 
-Python 3.8.1+
+Python 3.7.0
 
 ## Installation
 

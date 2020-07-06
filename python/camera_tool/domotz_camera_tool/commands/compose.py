@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import asyncio
 import logging
 from os import mkdir
 from os.path import join, dirname
@@ -12,6 +11,8 @@ from jinja2 import Environment, FileSystemLoader
 from domotz_camera_tool.client import ApiClient
 
 __author__ = 'Iacopo Papalini <iacopo@domotz.com>'
+
+from domotz_camera_tool.helpers.async_pool import gather_max_parallelism
 
 from domotz_camera_tool.helpers.cameras import CamerasHelper, STATUS_AUTHENTICATED, STATUS_LOCKED
 
@@ -76,7 +77,7 @@ class Compositor:
                 concurrent.append(helper.get_snapshot(self.agent_id, camera.id))
             else:
                 concurrent.append(self._nop())
-        images = await asyncio.gather(*concurrent)
+        images = await gather_max_parallelism(concurrent)
 
         await self._save_images_files(cameras, images)
         await self._save_thumbnails_files(cameras, images)
@@ -87,8 +88,8 @@ class Compositor:
 
         environment = Environment(loader=FileSystemLoader(ASSETS_DIR), autoescape=True)
         template = environment.get_template('compose.html.jinja2')
-        with open(join(self.dir_name, 'index.html'), 'w') as f:
-            f.write(template.render(**self.jinja_data))
+        with open(join(self.dir_name, 'index.html'), 'w') as _file:
+            _file.write(template.render(**self.jinja_data))
 
     async def _save_thumbnails_files(self, cameras, images):
         offline_image = Image.open(join(ASSETS_DIR, 'offline.jpg'))
