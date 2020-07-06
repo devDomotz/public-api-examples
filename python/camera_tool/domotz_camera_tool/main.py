@@ -96,8 +96,9 @@ def check_mandatory_parameters(configuration):
 
 def override_parameters(args, configuration):
     for parameter in MANDATORY_PARAMETERS:
-        if parameter in args:
-            configuration[parameter] = args[parameter]
+        value = args.__getattribute__(parameter)
+        if value:
+            configuration[parameter] = value
 
 
 if __name__ == '__main__':
