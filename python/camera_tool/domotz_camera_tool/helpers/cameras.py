@@ -10,7 +10,6 @@ from PIL import Image
 from domotz_camera_tool.client import ApiClient
 from domotz_camera_tool.helpers.async_pool import gather_max_parallelism
 
-CAMERA_TYPE = 199
 Camera = namedtuple('Camera', 'id,name,main_ip,make,model,status,last_status_change,zone,room')
 _logger = logging.getLogger(__name__)
 STATUS_DOWN = 'DOWN'
@@ -23,11 +22,12 @@ class CamerasHelper:
         self.client = client
 
     async def fetch_cameras(self, agent_id) -> [Camera]:
+        cameras_types = await self.fetch_type_ids_with_capability('snapshot')
         devices_raw = await self.client.fetch_devices(agent_id)
         fetchers = []
         for data in devices_raw:
             _logger.debug(json.dumps(data, indent=2))
-            if CAMERA_TYPE != data.get('type', {}).get('detected_id', 0):
+            if data.get('type', {}).get('detected_id', 0) not in cameras_types:
                 continue
             fetchers.append(self.client.fetch_device_details(agent_id, data['id']))
 
@@ -49,7 +49,8 @@ class CamerasHelper:
             _logger.debug("Details for camera %s:\n%s", data['id'], json.dumps(data, indent=2))
         return cameras
 
-    def _translate_status(self, data):
+    @classmethod
+    def _translate_status(cls, data):
         """For our goal, the status can either be AUTHENTICATED (ok), LOCKED (missing credentials) or DOWN"""
         if data['status'] == 'ONLINE':
             auth_status = data.get('authentication_status')
@@ -64,3 +65,12 @@ class CamerasHelper:
         data = await self.client.get_bytes('agent', agent_id, 'device', device_id, 'multimedia', 'camera', 'snapshot')
         image = Image.open(BytesIO(data))
         return image
+
+    async def fetch_type_ids_with_capability(self, capability) -> [int]:
+        ret = []
+        all_types = await self.client.get_json('type', 'device', 'detected')
+        for type_ in all_types:
+            if capability in type_['capabilities']:
+                ret.append(type_['id'])
+        _logger.info("Types with capability %s: %s", capability, ret)
+        return ret

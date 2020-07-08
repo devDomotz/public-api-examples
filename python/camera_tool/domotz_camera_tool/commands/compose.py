@@ -68,7 +68,6 @@ class Compositor:
         agent = await self.client.fetch_agent_details(self.agent_id)
         if agent['status']['value'] != 'ONLINE':
             raise RuntimeError("Agent is OFFLINE")
-        mkdir(self.dir_name)
         helper = CamerasHelper(self.client)
         cameras = await helper.fetch_cameras(self.agent_id)
         concurrent = []
@@ -79,6 +78,7 @@ class Compositor:
                 concurrent.append(self._nop())
         images = await gather_max_parallelism(concurrent)
 
+        mkdir(self.dir_name)
         await self._save_images_files(cameras, images)
         await self._save_thumbnails_files(cameras, images)
 
