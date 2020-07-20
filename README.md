@@ -1,3 +1,5 @@
+### This repository is outdated. Please refer to https://github.com/domotz/public-api-examples for an updated version of Domotz Public API examples.
+
 # public-api-examples
 
 A collection of small programs, in different languages, for showing use cases of the Domotz Public API.
