@@ -33,7 +33,7 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>3.2.3</version>
+                <version>5.1.0</version>
                 <executions>
                     <execution>
                         <phase>process-resources</phase>
